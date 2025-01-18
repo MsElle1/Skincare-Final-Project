@@ -23,8 +23,7 @@
         price: "$16.99",
         image: "https://m.media-amazon.com/images/I/41YTYhEzG1L._SL1000_.jpg",
         description: "Help clearing pores by removing makeup, sebum, and dirt."
-
-    }
+    },
 ];
 
 // Populate product cards
@@ -40,4 +39,60 @@ products.forEach(product => {
         </div>
     `;
     productSection.innerHTML += productCard;
+});
+document.addEventListener("DOMContentLoaded", function () {
+    // Get the search button and input elements
+    const searchButton = document.getElementById("searchButton");
+    const searchInput = document.getElementById("searchInput");
+
+    // Ensure elements exist before adding event listeners
+    if (searchButton && searchInput) {
+        searchButton.addEventListener("click", function (event) {
+            event.stopPropagation();  // Prevent the event from bubbling up to the document
+            searchInput.classList.toggle("active");  // Toggle visibility of the input
+        });
+
+        // Close the search input when clicking anywhere outside of it
+        document.addEventListener("click", function (event) {
+            if (!searchButton.contains(event.target) && !searchInput.contains(event.target)) {
+                searchInput.classList.remove("active");  // Close the search input if clicked outside
+            }
+        });
+    }
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const menuButton = document.getElementById("menuButton");
+    const menu = document.getElementById("menu");
+
+    // Toggle the visibility of the menu when the menu button is clicked
+    menuButton.addEventListener("click", function (event) {
+        event.stopPropagation();  // Prevent the event from bubbling up to the document
+        menu.classList.toggle("active");  // Toggle the visibility of the menu
+    });
+
+    // Close the menu if clicked outside
+    document.addEventListener("click", function (event) {
+        if (!menu.contains(event.target) && !menuButton.contains(event.target)) {
+            menu.classList.remove("active");  // Close the menu if clicked outside
+        }
+    });
+
+    // Handle the toggle of the dropdown content (Settings submenu)
+    const settingsMenu = document.querySelector('.dropdown');
+    const dropdownContent = settingsMenu.querySelector('.dropdown-content');
+
+    settingsMenu.addEventListener('click', function (event) {
+        event.stopPropagation();  // Prevent the event from propagating and closing the whole menu
+        dropdownContent.classList.toggle('hidden');  // Toggle the sub-menu visibility
+    });
+
+    // Close the dropdown when clicking outside
+    document.addEventListener('click', function (event) {
+        if (!settingsMenu.contains(event.target)) {
+            dropdownContent.classList.add('hidden');  // Hide the dropdown if clicked outside
+        }
+    });
 });

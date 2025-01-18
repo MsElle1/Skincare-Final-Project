@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MsElle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>MsElle</h1>
+        <p></p>
+        <nav>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+               
+        <a href="login.html">Log in</a> 
+        
+        </nav>
+        <div class="search-icon">      
+            <button id="searchButton">
+                <img src="https://img.icons8.com/?size=100&id=132&format=png&color=000000" alt="Search">
+            </button>
+            <input type="text" id="searchInput" placeholder="Search..." class="hidden">
+            <button id="menuButton">
+                <img src="https://img.icons8.com/?size=24&id=3096&format=png&color=000000" alt="Menu">
+            </button>
+            <!-- The menu (hidden initially) -->
+    <div id="menu" class="menu hidden">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li class="dropdown">
+                <a href="#">Settings</a> <!-- Settings Main Item -->
+                <ul class="dropdown-content hidden">
+                    <li><a href="account.html">Account</a></li>
+                    <li><a href="privacy.html">Privacy</a></li>
+                    <li><a href="notifications.html">Notifications</a></li>
+                    <li><a href="security.html">Security</a></li>
+                </ul>
+            </li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="help.html">Help</a></li>
+        </ul>
+    </div>
+</div>
+
+    </header>
+    <div class="container">
+        <h1 class="abc"></h1>
+        <p></p>
+        <div class="product-section">
+            <!-- Product cards will be dynamically inserted here -->
+        </div>
+    </div>
+    <footer>
+        <p>Your skin is our priority</p>
+    </footer>
+    <script src="index.js"></script>
+</body>
+</html>
