@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css">    
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your external CSS file -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -75,7 +75,6 @@
             text-decoration: underline;
         }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -128,12 +127,11 @@
 </head>
 <body>
 
-    <!-- Login Container -->
     <div class="login-container">
         <h2>Login</h2>
         
         <!-- Login Form -->
-        <form action="login_action.php" method="POST">
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
             <div class="input-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required placeholder="Enter your username">
@@ -143,6 +141,7 @@
                 <input type="password" id="password" name="password" required placeholder="Enter your password">
             </div>
             <button type="submit" class="login-btn">Login</button>
+            <p id="loginMessage"></p>
         </form>
 
         <p class="register-text">Don't have an account? <a href="#" id="register-link">Register here</a></p>
@@ -153,7 +152,7 @@
         <div class="modal-content">
             <span class="close" id="close-modal">&times;</span>
             <h2>Register</h2>
-            <form action="register_action.php" method="POST">
+            <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
                 <div class="input-group">
                     <label for="new-username">Username</label>
                     <input type="text" id="new-username" name="username" required placeholder="Choose a username">
@@ -171,96 +170,109 @@
                     <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirm your password">
                 </div>
                 <button type="submit" class="register-btn">Register</button>
+                <p id="registerMessage"></p>
             </form>
         </div>
     </div>
 
-
     <script>
-        // Get modal and elements
+        // Show registration modal
         var modal = document.getElementById("registerModal");
         var registerLink = document.getElementById("register-link");
         var closeModal = document.getElementById("close-modal");
 
-        // When the user clicks on "Register here", open the modal
         registerLink.onclick = function() {
             modal.style.display = "block";
         }
 
-        // When the user clicks on <span> (x), close the modal
         closeModal.onclick = function() {
             modal.style.display = "none";
         }
 
-        // When the user clicks anywhere outside the modal, close it
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
-    </script>
 
-    <!-- Script -->
-    <script>
-        function toggleForm() {
-            document.getElementById('loginForm').classList.toggle('hidden');
-            document.getElementById('registerForm').classList.toggle('hidden');
+        // Handle Login Form Submit
+        async function handleLoginSubmit(event) {
+            event.preventDefault();
+            const loginMessage = document.getElementById("loginMessage");
+            loginMessage.textContent = "Processing ...";
+
+            const formData = {
+                username: document.getElementById("username").value,
+                password: document.getElementById("password").value
+            };
+
+            try {
+                const response = await fetch("http://localhost:3180/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+                if (response.status === 200) {
+                    loginMessage.textContent = "Login successful!";
+                    loginMessage.style.color = "green";
+                    localStorage.setItem("token", data.token); // Store the JWT token
+                    window.location.href = "./dashboard.html"; // Redirect to the dashboard
+                } else {
+                    loginMessage.textContent = data.message;
+                    loginMessage.style.color = "red";
+                }
+            } catch (error) {
+                loginMessage.textContent = "Server error, please try again later.";
+                loginMessage.style.color = "red";
+            }
         }
 
-        async function handleSubmit(event, url, field, messageId){
+        // Handle Registration Form Submit
+        async function handleRegisterSubmit(event) {
             event.preventDefault();
-            console.log('hi from handleSubmit');
-            
-            const messageEl = document.getElementById(messageId);
-            messageEl.textContent = 'Processing ...';
-            messageEl.className = 'text-gray-600 text-center'
+            const registerMessage = document.getElementById("registerMessage");
+            registerMessage.textContent = "Processing ...";
 
-            // prepare request ('/login or register')
-            const formData = {};
-            console.log('field', field)
-            // 1. username, email, password
-            field.forEach(field => {
-                formData[field] = document.getElementById(field).value
-            })
+            const formData = {
+                username: document.getElementById("new-username").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("new-password").value,
+                regConfirmPassword: document.getElementById("confirm-password").value
+            };
 
-            if (url === 'register' && formData.password !== formData.regConfirmPassword)
-            {
-                messageEl.textContent = 'Password do not match';
-                messageEl.className = 'text-red-500 text-center';
+            if (formData.password !== formData.regConfirmPassword) {
+                registerMessage.textContent = "Passwords do not match!";
+                registerMessage.style.color = "red";
                 return;
             }
 
-            if (url === 'register') delete formData.regConfirmPassword;
-            // send request backend
-
             try {
-                const response = await fetch(`http://localhost:3180/${url}`, {
-                    method: 'POST',
+                const response = await fetch("http://localhost:3180/register", {
+                    method: "POST",
                     headers: {
-                        'Content-Type' : 'applcation/json'
+                        "Content-Type": "application/json"
                     },
                     body: JSON.stringify(formData)
-                })
-            }
-            catch(e) {
-                console.log('e',e);
-                messageEl.textContent = "Server error, try again later.";
-                messageEl.className = "text-red-600 text-center";
-            }
+                });
 
-            // display response: (sucess or error)
-
+                const data = await response.json();
+                if (response.status === 201) {
+                    registerMessage.textContent = "Registration successful!";
+                    registerMessage.style.color = "green";
+                    modal.style.display = "none"; // Close the modal
+                } else {
+                    registerMessage.textContent = data.message;
+                    registerMessage.style.color = "red";
+                }
+            } catch (error) {
+                registerMessage.textContent = "Server error, please try again later.";
+                registerMessage.style.color = "red";
+            }
         }
-
-        document.getElementById("register").addEventListener('submit', (event) => {
-            handleSubmit(event, 'register', ['username', 'email', 'password', 'regConfirmPassword'], 'regMessage');
-        })  
-
-        document.getElementById("login").addEventListener('submit', (event) => {
-            event.preventDefault();
-        }) 
-
-
     </script>
+
 </body>
 </html>
